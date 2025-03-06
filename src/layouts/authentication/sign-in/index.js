@@ -1,19 +1,6 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // react-router-dom components
 import { Link } from "react-router-dom";
@@ -42,9 +29,40 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function Basic() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+      console.log(response.data);
+      // Save the token and role in local storage or state
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
+      setMessage("Login successful");
+      if (response.data.role === "recruiter") {
+        navigate("/recruiter-dashboard"); // Navigate to recruiter dashboard
+      } else {
+        navigate("/hello"); // Navigate to hello page for candidates
+      }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      if (error.response && error.response.data) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Login failed");
+      }
+    }
+  };
 
   return (
     <BasicLayout image={bgImage}>
@@ -82,12 +100,24 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSignIn}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput
+                type="password"
+                label="Password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -102,7 +132,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
                 sign in
               </MDButton>
             </MDBox>
@@ -121,6 +151,7 @@ function Basic() {
                 </MDTypography>
               </MDTypography>
             </MDBox>
+            <p>{message}</p>
           </MDBox>
         </MDBox>
       </Card>
