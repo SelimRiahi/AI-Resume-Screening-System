@@ -1,7 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
-const cors = require('cors'); // Import the cors package
+const cors = require('cors');
 
 dotenv.config();
 
@@ -14,12 +14,11 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 // Enable CORS
-app.use(cors()); // Add this line to enable CORS
+app.use(cors());
 
 // Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-// Remove the job routes
-// app.use('/api/jobs', require('./routes/jobRoutes'));
+app.use('/api/jobs', require('./routes/jobRoutes')); // Add the job routes
 
 const PORT = process.env.PORT || 5000;
 

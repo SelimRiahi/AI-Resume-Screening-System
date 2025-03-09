@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Fab, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MDBox from "components/MDBox";
@@ -10,24 +11,59 @@ const RecruiterDashboard = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [showForm, setShowForm] = useState(false);
 
+  useEffect(() => {
+    // Fetch jobs from the database when the component mounts
+    axios
+      .get("http://localhost:5000/api/jobs")
+      .then((response) => {
+        setJobs(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the jobs!", error);
+      });
+  }, []);
+
   const handleAddJob = () => {
     setShowForm(true);
   };
 
   const handleSaveJob = () => {
+    const recruiterId = localStorage.getItem("recruiterId"); // Retrieve recruiter ID from local storage
+    if (!recruiterId) {
+      console.error("Recruiter ID not found!");
+      return;
+    }
+
     const newJob = {
-      id: jobs.length + 1,
       title: jobTitle,
       description: jobDescription,
+      recruiter: recruiterId, // Use the recruiter ID from local storage
     };
-    setJobs([...jobs, newJob]);
-    setJobTitle("");
-    setJobDescription("");
-    setShowForm(false);
+
+    // Save the new job to the database
+    axios
+      .post("http://localhost:5000/api/jobs", newJob)
+      .then((response) => {
+        setJobs([...jobs, response.data]);
+        setJobTitle("");
+        setJobDescription("");
+        setShowForm(false);
+      })
+      .catch((error) => {
+        console.error("There was an error saving the job!", error);
+      });
   };
 
   const handleDeleteJob = (id) => {
-    setJobs(jobs.filter((job) => job.id !== id));
+    // Delete the job from the database
+    axios
+      .delete(`http://localhost:5000/api/jobs/${id}`)
+      .then(() => {
+        setJobs(jobs.filter((job) => job._id !== id));
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the job!", error);
+      });
   };
 
   return (
@@ -71,11 +107,11 @@ const RecruiterDashboard = () => {
         </Card>
       )}
       {jobs.map((job) => (
-        <Card key={job.id} sx={{ mt: 3 }}>
+        <Card key={job._id} sx={{ mt: 3 }}>
           <CardContent>
             <Typography variant="h6">{job.title}</Typography>
             <Typography variant="body2">{job.description}</Typography>
-            <Button variant="contained" color="secondary" onClick={() => handleDeleteJob(job.id)}>
+            <Button variant="contained" color="secondary" onClick={() => handleDeleteJob(job._id)}>
               Delete
             </Button>
           </CardContent>

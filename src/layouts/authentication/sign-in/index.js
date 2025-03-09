@@ -50,6 +50,7 @@ function Basic() {
       localStorage.setItem("role", response.data.role);
       setMessage("Login successful");
       if (response.data.role === "recruiter") {
+        localStorage.setItem("recruiterId", response.data.recruiterId); // Store recruiter ID
         navigate("/recruiter-dashboard"); // Navigate to recruiter dashboard
       } else {
         navigate("/hello"); // Navigate to hello page for candidates
