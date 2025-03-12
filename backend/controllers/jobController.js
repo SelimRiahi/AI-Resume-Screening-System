@@ -32,7 +32,7 @@ exports.deleteJob = async (req, res) => {
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ message: 'Job not found' });
 
-    await job.remove();
+    await Job.deleteOne({ _id: req.params.id });
     res.json({ message: 'Job deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
