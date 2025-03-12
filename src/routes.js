@@ -1,6 +1,7 @@
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import RecruiterDashboard from "layouts/recruiter-dashboard/RecruiterDashboard";
+import CandidateDashboard from "layouts/candidate-dashboard/CandidateDashboard"; // Import CandidateDashboard
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -29,6 +30,14 @@ const routes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/recruiter-dashboard",
     component: <RecruiterDashboard />,
+  },
+  {
+    type: "collapse",
+    name: "Candidate Dashboard",
+    key: "candidate-dashboard",
+    icon: <Icon fontSize="small">work</Icon>,
+    route: "/candidate-dashboard",
+    component: <CandidateDashboard />, // Add CandidateDashboard route
   },
 ];
 

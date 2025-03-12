@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Fab, Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import {
+  Fab,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  IconButton,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
@@ -110,10 +120,14 @@ const RecruiterDashboard = () => {
         <Card key={job._id} sx={{ mt: 3 }}>
           <CardContent>
             <Typography variant="h6">{job.title}</Typography>
-            <Typography variant="body2">{job.description}</Typography>
-            <Button variant="contained" color="secondary" onClick={() => handleDeleteJob(job._id)}>
-              Delete
-            </Button>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              {job.description}
+            </Typography>
+            <Box display="flex" justifyContent="flex-end">
+              <IconButton color="error" onClick={() => handleDeleteJob(job._id)} sx={{ mt: 1 }}>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           </CardContent>
         </Card>
       ))}

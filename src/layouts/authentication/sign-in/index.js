@@ -44,16 +44,18 @@ function Basic() {
         email,
         password,
       });
+      console.log("Full response:", response); // Log the entire response object
       console.log(response.data);
       // Save the token and role in local storage or state
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
       setMessage("Login successful");
       if (response.data.role === "recruiter") {
+        console.log(response.data.recruiterId);
         localStorage.setItem("recruiterId", response.data.recruiterId); // Store recruiter ID
         navigate("/recruiter-dashboard"); // Navigate to recruiter dashboard
       } else {
-        navigate("/hello"); // Navigate to hello page for candidates
+        navigate("/candidate-dashboard"); // Navigate to candidate dashboard
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
