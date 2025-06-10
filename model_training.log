@@ -1,0 +1,4 @@
+2025-03-25 21:17:53,582 - INFO - Starting model training process
+2025-03-25 21:17:58,645 - INFO - Successfully connected to MongoDB
+2025-03-25 21:17:58,704 - ERROR - No job documents found in collection
+2025-03-25 21:17:58,704 - ERROR - Model training failed

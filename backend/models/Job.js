@@ -9,6 +9,10 @@ const JobSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  companyName: {
+    type: String,
+    required: true,
+  },
   recruiter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -20,4 +24,4 @@ const JobSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Job', JobSchema);
+module.exports = mongoose.models.Job || mongoose.model('Job', JobSchema);

@@ -19,12 +19,19 @@ const RecruiterDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
+    const recruiterId = localStorage.getItem("recruiterId"); // Retrieve recruiter ID from local storage
+    if (!recruiterId) {
+      console.error("Recruiter ID not found!");
+      return;
+    }
+
     // Fetch jobs from the database when the component mounts
     axios
-      .get("http://localhost:5000/api/jobs")
+      .get(`http://localhost:5000/api/jobs?recruiterId=${recruiterId}`)
       .then((response) => {
         setJobs(response.data);
       })
@@ -47,6 +54,7 @@ const RecruiterDashboard = () => {
     const newJob = {
       title: jobTitle,
       description: jobDescription,
+      companyName: companyName,
       recruiter: recruiterId, // Use the recruiter ID from local storage
     };
 
@@ -57,6 +65,7 @@ const RecruiterDashboard = () => {
         setJobs([...jobs, response.data]);
         setJobTitle("");
         setJobDescription("");
+        setCompanyName("");
         setShowForm(false);
       })
       .catch((error) => {
@@ -96,6 +105,13 @@ const RecruiterDashboard = () => {
               sx={{ mt: 2 }}
             />
             <TextField
+              label="Company Name"
+              fullWidth
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
               label="Job Description"
               fullWidth
               multiline
@@ -109,7 +125,7 @@ const RecruiterDashboard = () => {
               color="primary"
               onClick={handleSaveJob}
               sx={{ mt: 2 }}
-              disabled={!jobTitle || !jobDescription} // Disable button if fields are empty
+              disabled={!jobTitle || !jobDescription || !companyName} // Disable button if fields are empty
             >
               Save
             </Button>
@@ -122,6 +138,9 @@ const RecruiterDashboard = () => {
             <Typography variant="h6">{job.title}</Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               {job.description}
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Company: {job.companyName}
             </Typography>
             <Box display="flex" justifyContent="flex-end">
               <IconButton color="error" onClick={() => handleDeleteJob(job._id)} sx={{ mt: 1 }}>

@@ -3,7 +3,9 @@ const Job = require('../models/Job');
 // Get all jobs
 exports.getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find();
+    const recruiterId = req.query.recruiterId;
+    const filter = recruiterId ? { recruiter: recruiterId } : {};
+    const jobs = await Job.find(filter);
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -12,10 +14,19 @@ exports.getJobs = async (req, res) => {
 
 // Create a new job
 exports.createJob = async (req, res) => {
+  console.log('Request body:', req.body); // Log the request body
+
+  const { title, description, companyName, recruiter } = req.body;
+
+  if (!title || !description || !companyName || !recruiter) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
   const job = new Job({
-    title: req.body.title,
-    description: req.body.description,
-    recruiter: req.body.recruiter,
+    title,
+    description,
+    companyName,
+    recruiter,
   });
 
   try {
